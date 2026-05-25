@@ -2,7 +2,7 @@ import { integer, pgTable, varchar, date, pgEnum } from "drizzle-orm/pg-core";
 import { persons } from "./Person";
 import { departments } from "./College_Department";
 
-const deanStatusEnum = pgEnum('dean_status', [
+export const deanStatusEnum = pgEnum('dean_status', [
     'active',
     'inactive'
 ]);
