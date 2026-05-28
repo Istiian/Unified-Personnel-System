@@ -36,6 +36,20 @@
       "when": 1779889089375,
       "tag": "0004_dusty_victor_mancha",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1779974807992,
+      "tag": "0005_ambitious_baron_strucker",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1779976465890,
+      "tag": "0006_dear_dust",
+      "breakpoints": true
     }
   ]
 }

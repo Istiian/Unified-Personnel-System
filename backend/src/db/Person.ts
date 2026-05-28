@@ -1,14 +1,7 @@
-import { integer, pgTable, varchar, date } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
-import { admins } from "./Admin";
-import { deans } from "./Dean";
-import { faculty } from "./Faculty";
-import { programChairs } from "./Program_Chair";
-import { staff } from "./Staff";
-import { students } from "./Student";
+import { pgTable, varchar, date, serial } from "drizzle-orm/pg-core";
 
 export const persons = pgTable('persons', {
-    id: integer('id').primaryKey().generatedByDefaultAsIdentity(),
+    id: serial('id').primaryKey(),
     firstName: varchar('first_name', { length: 255 }).notNull(),
     lastName: varchar('last_name', { length: 255 }).notNull(),
     middleName: varchar('middle_name', { length: 255 }),
@@ -23,14 +16,6 @@ export const persons = pgTable('persons', {
     region: varchar('region', { length: 255 }).notNull(),
 });
 
-export const personsRelations = relations(persons, ({ one }) => ({
-    admin: one(admins),
-    dean: one(deans),
-    faculty: one(faculty),
-    programChair: one(programChairs),
-    staff: one(staff),
-    student: one(students),
-}));
 
 
 

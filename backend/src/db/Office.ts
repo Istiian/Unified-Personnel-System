@@ -1,15 +1,8 @@
-import { integer, pgTable, varchar} from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
-import { admins } from "./Admin";
-import { staff } from "./Staff";
+import { integer, pgTable, serial, varchar} from "drizzle-orm/pg-core";
 
 export const offices = pgTable('offices', {
-    id: integer('id').primaryKey().generatedByDefaultAsIdentity(),
+    id: serial('id').primaryKey(),
     name: varchar('name', { length: 255 }).notNull().unique(),
 });
 
-export const officesRelations = relations(offices, ({ many }) => ({
-    admins: many(admins),
-    staff: many(staff)
-}));
 
