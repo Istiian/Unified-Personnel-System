@@ -1,56 +1,52 @@
 import { persons } from "../../db/Person";
 import { students } from "../../db/Student";
 import { staff } from "../../db/Staff";
-import { Person, Student, Staff, Admin, Faculty, Dean, ProgramChair,  } from "../common.type";
+import { Person, Student, Staff, Admin, Faculty, Dean, ProgramChair, } from "../common.type";
 import type { NodePgTransaction } from 'drizzle-orm/node-postgres';
 import { admins } from "../../db/Admin";
 import { faculty as facultyTable } from "../../db/Faculty";
 import { deans } from "../../db/Dean";
 import { programChairs } from "../../db/Program_Chair";
 import { hashPassword, checkUserExists } from "./person.utils";
-import { AppError } from "../../middleware/app-error";
-
+import { db } from "../../db/client";
+import { updatePersonData } from "../common.type";
+import { eq } from "drizzle-orm/sql/expressions/conditions";
+import {AppError} from "../../middleware/app-error";
 
 
 export const recordPersonalInfo = async (personData: Person, trx?: any) => {
-    try {
-        if (await checkUserExists(personData.email)) {
-            throw new AppError("Email already exists", 409);
-        }
+    const hashedPassword = await hashPassword(personData.password);
 
-        if (personData.password !== personData.repeatPassword) {
-            throw new AppError("Passwords do not match", 409);
-        }
-        
-        const hashedPassword = await hashPassword(personData.password);
-        
-        const [person] = await trx.insert(persons).values({
-            firstName: personData.firstName,
-            lastName: personData.lastName,
-            middleName: personData.middleName,
-            birthDate: personData.birthDate,
-            contactNumber: personData.contactNumber,
-            email: personData.email,
-            password: hashedPassword,
-            houseNumber: personData.address.houseNumber,
-            street: personData.address.street,
-            barangay: personData.address.barangay,
-            cityMunicipality: personData.address.cityMunicipality,
-            region: personData.address.region,
-            province: personData.address.province,
-            role: personData.role
-        }).returning();
 
-        return person;
+    const [person] = await trx.insert(persons).values({
+        firstName: personData.firstName,
+        lastName: personData.lastName,
+        middleName: personData.middleName,
+        birthDate: personData.birthDate,
+        contactNumber: personData.contactNumber,
+        email: personData.email,
+        password: hashedPassword,
+        houseNumber: personData.address.houseNumber,
+        street: personData.address.street,
+        barangay: personData.address.barangay,
+        cityMunicipality: personData.address.cityMunicipality,
+        region: personData.address.region,
+        province: personData.address.province,
+        role: personData.role
+    }).returning();
+    return person;
+}
 
-    } catch (error) {
-        console.error("Error recording person info:", error);
-        throw error;
-    }
+export const updatePersonalInfo = async (personId: number, personData: updatePersonData, trx?: any) => {
+    const [updatedPerson] = await trx.update(persons)
+        .set(personData)
+        .where(eq(persons.personId, personId))
+        .returning();
+    return updatedPerson;
 }
 
 export const recordStudentInfo = async (studentData: Student, trx?: any) => {
-    try{
+    try {
         const [student] = await trx.insert(students).values({
             personId: studentData.personId,
             enrollmentDate: studentData.enrollmentDate,
@@ -68,7 +64,7 @@ export const recordStudentInfo = async (studentData: Student, trx?: any) => {
 }
 
 export const recordStaffInfo = async (staffData: Staff, trx?: any) => {
-    try{
+    try {
         const [staffMember] = await trx.insert(staff).values({
             personId: staffData.personId,
             officeId: staffData.officeId,
@@ -85,7 +81,7 @@ export const recordStaffInfo = async (staffData: Staff, trx?: any) => {
 }
 
 export const recordAdminInfo = async (adminData: Admin, trx?: any) => {
-    try{
+    try {
         const [admin] = await trx.insert(admins).values({
             personId: adminData.personId,
             officeId: adminData.officeId,
@@ -93,7 +89,7 @@ export const recordAdminInfo = async (adminData: Admin, trx?: any) => {
             status: adminData.status,
             type: adminData.type
         }).returning();
-    
+
         return admin;
     } catch (error) {
         console.error("Error recording admin info:", error);
@@ -102,7 +98,7 @@ export const recordAdminInfo = async (adminData: Admin, trx?: any) => {
 }
 
 export const recordFacultyInfo = async (facultyData: Faculty, trx?: any) => {
-    try{
+    try {
         const [facultyMember] = await trx.insert(facultyTable).values({
             personId: facultyData.personId,
             startDate: facultyData.startDate,
@@ -119,7 +115,7 @@ export const recordFacultyInfo = async (facultyData: Faculty, trx?: any) => {
 }
 
 export const recordDeanInfo = async (deanData: Dean, trx?: any) => {
-    try{
+    try {
         const [dean] = await trx.insert(deans).values({
             personId: deanData.personId,
             startDate: deanData.startDate,
@@ -136,7 +132,7 @@ export const recordDeanInfo = async (deanData: Dean, trx?: any) => {
 }
 
 export const recordProgramChairInfo = async (programChairData: ProgramChair, trx?: any) => {
-    try{
+    try {
         const [programChair] = await trx.insert(programChairs).values({
             personId: programChairData.personId,
             courseId: programChairData.courseId,
@@ -144,7 +140,7 @@ export const recordProgramChairInfo = async (programChairData: ProgramChair, trx
             status: programChairData.status,
             type: programChairData.type
         }).returning()
-    
+
         return programChair;
     } catch (error) {
         console.error("Error recording program chair info:", error);

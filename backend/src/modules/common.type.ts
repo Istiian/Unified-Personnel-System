@@ -31,6 +31,17 @@ export interface Person {
     address: address;
     role: personRole;
 }
+
+export interface updatePersonData {
+    studentId: number;
+    firstName?: string;
+    lastName?: string;
+    middleName?: string | null;
+    birthDate?: string;
+    contactNumber?: string;
+    email?: string;
+    address?: Partial<address>;
+}
 export interface CollegeDepartment{
     id: number;
     name: string;
