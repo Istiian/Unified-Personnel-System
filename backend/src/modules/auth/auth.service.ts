@@ -6,7 +6,7 @@ import { loginRequest, otpRequest, resetPasswordRequest } from "./type.auth";
 import { db } from "../../db/client";
 import { eq } from 'drizzle-orm/sql/expressions/conditions';
 import { redisClient } from "../../../redis";
-import { sendEmail } from '../nodemailer';
+import { sendEmail } from '../common.utils';
 
 export const login = async (loginData: loginRequest) => {
     try {
@@ -16,7 +16,7 @@ export const login = async (loginData: loginRequest) => {
             columns: { personId: true, role: true, password: true },
             with: {
                 student: {
-                    columns: {}, with: {
+                    columns: {studentId: true}, with: {
                         course: {
                             columns: {
                                 name: true,
@@ -25,7 +25,7 @@ export const login = async (loginData: loginRequest) => {
                     }
                 },
                 faculty: {
-                    columns: {}, with: {
+                    columns: {facultyId: true}, with: {
                         department: {
                             columns: {
                                 name: true,
@@ -34,7 +34,7 @@ export const login = async (loginData: loginRequest) => {
                     }
                 },
                 admin: {
-                    columns: {}, with: {
+                    columns: {adminId: true}, with: {
                         office: {
                             columns: {
                                 name: true,
@@ -43,7 +43,7 @@ export const login = async (loginData: loginRequest) => {
                     }
                 },
                 dean: {
-                    columns: {}, with: {
+                    columns: {deanId: true}, with: {
                         department: {
                             columns: {
                                 name: true,
@@ -52,7 +52,7 @@ export const login = async (loginData: loginRequest) => {
                     }
                 },
                 programChair: {
-                    columns: {}, with: {
+                    columns: {programChairId: true}, with: {
                         course: {
                             columns: {
                                 name: true,
@@ -61,7 +61,7 @@ export const login = async (loginData: loginRequest) => {
                     }
                 },
                 staff: {
-                    columns: {}, with: {
+                    columns: {staffId: true}, with: {
                         office: {
                             columns: {
                                 name: true,
@@ -82,10 +82,9 @@ export const login = async (loginData: loginRequest) => {
 
         //format token credentials
         const tokenCredentials = formatTokenCredentials(user);
-
+        console.log('Token Credentials:', tokenCredentials);
         const accessToken = generateAccessToken(tokenCredentials);
         const refreshToken = generateRefreshToken(tokenCredentials);
-        console.log('Generated tokens for personId:', user.personId);
         
         // Store refresh token in Redis with an expiration time (e.g., 7 days)
         await redisClient.setEx(`refreshToken:${user.personId}`, 7 * 24 * 60 * 60, refreshToken)

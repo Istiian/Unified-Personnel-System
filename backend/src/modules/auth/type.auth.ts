@@ -26,6 +26,12 @@ export type tokenCredentials = {
     office?: string;
     department?: string;
     course?: string;
+    studentId?: number;
+    adminId?: number;
+    facultyId?: number;
+    deanId?: number;
+    programChairId?: number;
+    staffId?: number;
 }
     
 
@@ -34,31 +40,37 @@ export type AuthUser = {
     role: 'student' | 'faculty' | 'admin' | 'dean' | 'programChair' | 'staff';
     password: string;
     student?: {
+        studentId: number;
         course?: {
             name: string;
         } | null;
     } | null;
     faculty?: {
+        facultyId: number;
         department?: {
             name: string;
         } | null;
     } | null;
     admin?: {
+        adminId: number;
         office?: {
             name: string;
         } | null;
     } | null;
     dean?: {
+        deanId: number;
         department?: {
             name: string;
         } | null;
     } | null;
     programChair?: {
+        programChairId: number;
         course?: {
             name: string;
         } | null;
     } | null;
     staff?: {
+        staffId: number;
         office?: {
             name: string;
         } | null;

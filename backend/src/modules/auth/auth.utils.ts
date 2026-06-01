@@ -71,6 +71,7 @@ export const formatTokenCredentials = (userData: AuthUser): tokenCredentials => 
     switch (userData.role) {
         case 'student':
             return {
+                studentId: userData.student?.studentId,
                 personId: userData.personId,
                 role: userData.role,
                 course: userData.student?.course?.name
@@ -78,30 +79,35 @@ export const formatTokenCredentials = (userData: AuthUser): tokenCredentials => 
         // Add cases for other roles as needed
         case 'faculty':
             return {
+                facultyId: userData.faculty?.facultyId,
                 personId: userData.personId,
                 role: userData.role,
                 department: userData.faculty?.department?.name
             };
         case 'admin':
             return {
+                adminId: userData.admin?.adminId,
                 personId: userData.personId,
                 role: userData.role,
                 office: userData.admin?.office?.name
             };
         case 'dean':
             return {
+                deanId: userData.dean?.deanId,
                 personId: userData.personId,
                 role: userData.role,
                 department: userData.dean?.department?.name
             };
         case 'programChair':
             return {
+                programChairId: userData.programChair?.programChairId,
                 personId: userData.personId,
                 role: userData.role,
                 course: userData.programChair?.course?.name
             };
         case 'staff':
             return {
+                staffId: userData.staff?.staffId,
                 personId: userData.personId,
                 role: userData.role,
                 office: userData.staff?.office?.name

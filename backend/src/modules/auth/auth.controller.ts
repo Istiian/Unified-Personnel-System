@@ -82,7 +82,6 @@ export const resetPasswordHandler = async (req: Request, res: Response, next: Ne
     try {
         const { email, otp, newPassword, repeatNewPassword } = req.body;
        
-        
         if (newPassword !== repeatNewPassword) {
             throw new AppError('Passwords do not match', 400);
         }

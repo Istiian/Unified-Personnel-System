@@ -49,7 +49,6 @@ export const updateStudentInfoHandler = async (req: Request, res: Response, next
         const { personalData, studentData }: { personalData: Person, studentData: Student } = req.body;
         const studentIdParam = Array.isArray(req.params.studentId) ? req.params.studentId[0] : req.params.studentId;
         if (!studentIdParam) return next(new AppError('Missing studentId parameter', 400));
-        
         const studentId = parseInt(studentIdParam, 10);
 
         if (Number.isNaN(studentId)){

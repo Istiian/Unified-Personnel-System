@@ -10,7 +10,7 @@ const dateStringSchema = z.string().refine((date) => {
 
 const passwordSchema = z
     .string()
-    .min(6, "Password must be exactly 6 characters")
+    .min(9, "Password must be exactly 9 characters")
     .regex(/[a-z]/, "Password must contain at least one lowercase letter")
     .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
     .regex(/[0-9]/, "Password must contain at least one number")
@@ -35,7 +35,7 @@ const personSchema = z.object({
     password: passwordSchema,
     repeatPassword: passwordSchema,
     address: addressSchema,
-});
+})
 
 const studentDataSchema = z.object({
     enrollmentDate: dateStringSchema,
@@ -52,7 +52,10 @@ const updateStudentDataSchema = studentDataSchema.partial();
 export const registerStudentSchema = z.object({
     personalData: personSchema.extend({
         role: z.literal("student"),
-    }),
+    }).refine((data) => data.password === data.repeatPassword, {
+    message: "Passwords do not match",
+    path: ["repeatPassword"],
+}),
     studentData: studentDataSchema,
 });
 
