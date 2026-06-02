@@ -1,6 +1,6 @@
 import { db } from '../../db/client';
 import { staff } from '../../db/Staff';
-import { and, eq, ilike, ne } from 'drizzle-orm';
+import { and, eq, ilike, ne, or } from 'drizzle-orm';
 import { Staff, StaffFilter } from './staff.type';
 import { Person } from '../common.type';
 import { persons } from '../../db/Person';
@@ -61,18 +61,37 @@ export const createStaff = async (staffData: Staff) => {
 
 export const getStaff = async (page: number, limit: number, filter: StaffFilter = {}) => {
     try {
-        const whereClause: any = [];
-        if (filter.staffId) whereClause.push(eq(staff.staffId, filter.staffId));
-        if (filter.personId) whereClause.push(eq(staff.personId, filter.personId));
-        if (filter.officeId) whereClause.push(eq(staff.officeId, filter.officeId));
-        if (filter.startDate) whereClause.push(ilike(staff.startDate, `%${filter.startDate}%`));
-        if (filter.status) whereClause.push(eq(staff.status, filter.status));
-        if (filter.type) whereClause.push(eq(staff.type, filter.type));
-        console.log("Where Clause:", whereClause);
+        const staffWhereClause: any = [];
+        if (filter.staffId) staffWhereClause.push(eq(staff.staffId, filter.staffId));
+        if (filter.personId) staffWhereClause.push(eq(staff.personId, filter.personId));
+        if (filter.officeId) staffWhereClause.push(eq(staff.officeId, filter.officeId));
+        if (filter.startDate) staffWhereClause.push(ilike(staff.startDate, `%${filter.startDate}%`));
+        if (filter.status) staffWhereClause.push(eq(staff.status, filter.status));
+        if (filter.type) staffWhereClause.push(eq(staff.type, filter.type));
+
+        const personWhereClause: any = [];
+        if (filter.search) {
+            const searchTerm = `%${filter.search}%`;
+            personWhereClause.push(or(
+                ilike(persons.firstName, searchTerm),
+                ilike(persons.lastName, searchTerm),
+                ilike(persons.email, searchTerm),
+                ilike(persons.contactNumber, searchTerm)
+            ));
+        }
+
         const result = await db.query.staff.findMany({
-            where: and(...whereClause),
+            where: and(...staffWhereClause),
             with: {
-                person: true,
+                person: {
+                    where: or(...personWhereClause),
+                    columns: {
+                        firstName: true, lastName: true, email: true, 
+                        contactNumber: true, birthDate: true, personId: true,
+                        houseNumber: true, street: true, barangay: true, cityMunicipality: true,
+                        region: true, province: true, username: true
+                    }
+                },
                 office: true,
             },
             offset: (page - 1) * limit,

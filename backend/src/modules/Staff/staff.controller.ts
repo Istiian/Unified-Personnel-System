@@ -34,6 +34,7 @@ export const getStaffHandler = async (req: Request, res: Response, next: NextFun
         if (req.query.startDate) filter.startDate = req.query.startDate as string;
         if (req.query.status) filter.status = req.query.status as string;
         if (req.query.type) filter.type = req.query.type as string;
+        if (req.query.search) filter.search = req.query.search as string;
         
         const staffList = await getStaff(page, limit, filter);
         

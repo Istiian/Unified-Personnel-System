@@ -1,4 +1,4 @@
-import { pgTable, varchar, date, serial } from "drizzle-orm/pg-core";
+import { pgTable, varchar, date, serial, index } from "drizzle-orm/pg-core";
 import { personRole } from "./Enum";
 import { sql } from "drizzle-orm";
 
@@ -9,9 +9,9 @@ export const persons = pgTable('persons', {
     middleName: varchar('middle_name', { length: 255 }),
     birthDate: date('birth_date').notNull(),
     contactNumber: varchar('contact_number', { length: 20 }).notNull(),
-    email: varchar('email', { length: 255 }).notNull(),
-    username: varchar('username', { length: 255 }).notNull().unique().default(sql``),
-    password: varchar('password', { length: 255 }).notNull().default(sql``),
+    email: varchar('email', { length: 255 }).notNull().unique(),
+    username: varchar('username', { length: 255 }).notNull().unique().default(""),
+    password: varchar('password', { length: 255 }).notNull(),
     houseNumber: varchar('house_number', { length: 255 }).notNull(),
     street: varchar('street', { length: 255 }).notNull(),
     barangay: varchar('barangay', { length: 255 }).notNull(),
@@ -19,8 +19,12 @@ export const persons = pgTable('persons', {
     region: varchar('region', { length: 255 }).notNull(),
     province: varchar('province', { length: 255 }).notNull(),
     role: personRole('role').notNull(),
-});
-
+},
+    (table) => [
+        index('idx_person_email').on(table.email),
+        index('idx_person_username').on(table.username)
+    ]
+);
 
 
 

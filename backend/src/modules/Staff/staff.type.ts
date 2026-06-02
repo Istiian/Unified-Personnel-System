@@ -24,4 +24,5 @@ export type StaffFilter = {
     startDate?: string;
     status?: employeeStatus;
     type?: employeeType;
+    search?: string;
 };
