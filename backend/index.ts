@@ -8,6 +8,8 @@ import departmentRoutes from './src/modules/department/department.routes';
 import staffRoutes from './src/modules/Staff/staff.router';
 import facultyRoutes from './src/modules/Faculty/faculty.router';
 import deanRoutes from './src/modules/dean/dean.router';
+import adminRoutes from './src/modules/admin/admin.router';
+import programChairRoutes from './src/modules/program chair/programChair.router';
 import { errorMiddleware } from './src/middleware/errorHandler';
 
 dotenv.config();
@@ -22,6 +24,8 @@ app.use('/api/department', departmentRoutes);
 app.use('/api/staff', staffRoutes);
 app.use('/api/faculty', facultyRoutes);
 app.use('/api/dean', deanRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/program-chair', programChairRoutes);
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello, Worldd!');
