@@ -86,7 +86,7 @@ export const getFaculty = async (page: number, limit: number, filter: FacultyFil
                 person: {
                     where: or(...personWhereClause),
                     columns: {
-                       password: false,
+                       password: false
                     },
                 },
                 department: true,
