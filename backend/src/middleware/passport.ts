@@ -1,8 +1,8 @@
 import passport from "passport";
 import {Strategy as JWTStrategy, ExtractJwt} from "passport-jwt";
-import {persons} from "./src/db/Person";
+import {persons} from "../db/Person";
 import { eq } from "drizzle-orm/sql/expressions/conditions";
-import { db } from "./src/db/client";
+import { db } from "../db/client";
 import fs from "fs";
 
 const publickey = fs.readFileSync(process.env.PUBLIC_KEY_PATH as string, 'utf8');

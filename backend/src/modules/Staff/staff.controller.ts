@@ -81,12 +81,12 @@ export const deleteStaffHandler = async (req: Request, res: Response, next: Next
         if (!staffIdParam) {
             return next(new AppError('Missing staffId parameter', 400));
         }
-        console.log("Received staffId for deletion:", staffIdParam);
+        
         const staffId = parseInt(staffIdParam, 10);
         if (Number.isNaN(staffId)) {
             return next(new AppError('Invalid staffId', 400));
         }
-        console.log("Deleting staff with ID:", staffId);
+        
         const deletedStaff = await deleteStaff(staffId);
         if (!deletedStaff) {
             return next(new AppError('Staff not found', 404));

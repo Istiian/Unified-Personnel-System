@@ -3,7 +3,7 @@ import { AppError } from "./app-error"
 
 export const validateRequest = (schema: z.ZodTypeAny) => {
     return (req: any, res: any, next: any) => {
-        console.log("Validating request body:", req.body);
+      
         const result = schema.safeParse(req.body);
 
         if (!result.success) {

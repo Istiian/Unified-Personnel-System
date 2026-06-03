@@ -66,7 +66,6 @@ export const updateFacultyHandler = async (req: Request, res: Response, next: Ne
         res.status(200).json({
             success: true,
             message: 'Faculty updated successfully',
-            faculty: updatedFaculty,
         });
     } catch (error) {
         if (error instanceof AppError) return next(error);

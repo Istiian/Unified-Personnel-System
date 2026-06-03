@@ -68,7 +68,7 @@ export const getFaculty = async (page: number, limit: number, filter: FacultyFil
         if (filter.startDate) facultyWhereClause.push(ilike(faculty.startDate, `%${filter.startDate}%`));
         if (filter.status) facultyWhereClause.push(eq(faculty.status, filter.status));
         if (filter.type) facultyWhereClause.push(eq(faculty.type, filter.type));
-        
+
         const personWhereClause: any[] = [];
         if (filter.search) {
             const searchTerm = `%${filter.search}%`;
@@ -86,7 +86,7 @@ export const getFaculty = async (page: number, limit: number, filter: FacultyFil
                 person: {
                     where: or(...personWhereClause),
                     columns: {
-                       password: false
+                        password: false
                     },
                 },
                 department: true,
@@ -136,9 +136,9 @@ export const updateFaculty = async (facultyId: number, facultyData: Partial<Facu
                     type: facultyData.facultyData?.type,
                 })
                 .where(eq(faculty.facultyId, facultyId))
-                .returning();
+                .returning({ id: faculty.facultyId, personId: faculty.personId });
 
-            const [updatedPerson] = await tx.update(persons)
+            const updatedPerson = await tx.update(persons)
                 .set({
                     firstName: facultyData.personalData?.firstName,
                     lastName: facultyData.personalData?.lastName,
@@ -153,15 +153,9 @@ export const updateFaculty = async (facultyId: number, facultyData: Partial<Facu
                     province: facultyData.personalData?.address?.province,
                 })
                 .where(eq(persons.personId, updatedFaculty.personId))
-                .returning();
 
-            return {
-                person: updatedPerson,
-                faculty: updatedFaculty,
-            };
         });
 
-        return result;
     } catch (error) {
         throw error;
     }

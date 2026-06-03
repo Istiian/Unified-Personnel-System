@@ -18,7 +18,6 @@ export const listStudentsHandler = async (req: Request, res: Response, next: Nex
         if (req.query.courseId) filter.courseId = parseInt(req.query.courseId as string);
         if (req.query.search) filter.search = req.query.search as string;
         
-        console.log("Received filters:", filter);
         const students = await getStudents(page, limit, filter)
         res.json(students);
     } catch (error) {
@@ -52,7 +51,7 @@ export const updateStudentInfoHandler = async (req: Request, res: Response, next
         if (Number.isNaN(studentId)){
             return next(new AppError('Invalid studentId', 400));
         } 
-        console.log("Updating student with ID:", studentId);
+        
         const data = await updateStudentInfo(studentId, { personalData, studentData });
         res.status(200).json({
             success: true,

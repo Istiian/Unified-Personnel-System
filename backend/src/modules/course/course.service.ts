@@ -19,7 +19,7 @@ export const createCourse = async (courseData: Course)=> {
 export const getCourse = async (filter: Course) => {
     try {
         const whereClause: any = [];
-        console.log('Filter:', filter);
+       
         if (filter.courseId) whereClause.push(eq(courses.courseId, filter.courseId));
         if (filter.name) whereClause.push(ilike(courses.name, `%${filter.name}%`));
         if (filter.departmentId) whereClause.push(eq(courses.departmentId, filter.departmentId));
