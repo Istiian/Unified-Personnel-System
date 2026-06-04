@@ -8,6 +8,7 @@ import { sendEmailRequest} from './auth/type.auth';
 import PDFDocument from 'pdfkit';
 import logger from '../../logger';
 import { handleServiceError } from '../utils/serviceError';
+import { randomBytes } from 'crypto';
 
 const transporter = createTransport({
     host: process.env.EMAIL_HOST,
@@ -68,4 +69,8 @@ export const veritfyParam = (param: string, paramName: string): number => {
         throw new AppError(`Invalid ${paramName}`, 400);
     }
     return paramValue;
+}
+
+export const generateDefaultPassword = (length: number = 20): string => {
+    return randomBytes(length).toString('base64').slice(0, length);
 }

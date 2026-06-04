@@ -4,7 +4,7 @@ import { faculty } from '../../db/Faculty';
 import { persons } from '../../db/Person';
 import { departments } from '../../db/Department';
 import { AppError } from '../../middleware/app-error';
-import { checkUserExists, hashPassword } from '../common.utils';
+import { checkUserExists, generateDefaultPassword, hashPassword } from '../common.utils';
 import { Faculty, FacultyFilter } from './faculty.type';
 import { ROLE_ID } from '../../constants/roles';
 
@@ -14,7 +14,7 @@ export const createFaculty = async (facultyData: Faculty) => {
             throw new AppError('User with this email already exists', 400);
         }
 
-        const generatedPassword = `${facultyData.personalData.lastName.toLowerCase()}${new Date().getFullYear()}`;
+        const generatedPassword = generateDefaultPassword();
         const hashedPassword = await hashPassword(generatedPassword);
 
         const result = await db.transaction(async (tx) => {
@@ -100,7 +100,7 @@ export const listFaculties = async (page: number, limit: number, filter: Faculty
     }
 };
 
-export const getFacultyById = async (facultyId: number) =>{
+export const getFacultyById = async (facultyId: number) => {
     try {
         const result = await db.query.faculty.findFirst({
             where: eq(faculty.facultyId, facultyId),

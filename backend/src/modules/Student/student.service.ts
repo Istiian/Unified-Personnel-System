@@ -2,7 +2,7 @@ import { students } from "../../db/Student"
 import { db } from "../../db/client";
 import { persons } from "../../db/schema";
 import { AppError } from "../../middleware/app-error";
-import { checkUserExists, hashPassword } from "../common.utils";
+import { checkUserExists, hashPassword,generateDefaultPassword } from "../common.utils";
 import { Student, StudentFilter } from "./student.type";
 import { and, eq, ilike, ne, or } from "drizzle-orm";
 import { ROLE_ID } from "../../constants/roles";
@@ -64,12 +64,12 @@ export const getStudentById = async (studentId: number) => {
 
 export const registerStudent = async (studentData: Student) => {
     try {
-        const generatedPassword = `${studentData.personalData.lastName.toLowerCase()}${new Date().getFullYear()}`;
-        const hashedPassword = await hashPassword(generatedPassword);
-
+        
         if (await checkUserExists(studentData.personalData.email)) {
             throw new AppError("User with this email already exists", 400);
         }
+        const generatedPassword = generateDefaultPassword();
+        const hashedPassword = await hashPassword(generatedPassword);
 
         const data = await db.transaction(async (trx) => {
             const [person] = await trx.insert(persons).values({

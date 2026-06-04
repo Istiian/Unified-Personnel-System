@@ -4,7 +4,7 @@ import { programChairs } from '../../db/Program_Chair';
 import { courses } from '../../db/Course';
 import { persons } from '../../db/Person';
 import { AppError } from '../../middleware/app-error';
-import { checkUserExists, hashPassword } from '../common.utils';
+import { checkUserExists, generateDefaultPassword, hashPassword } from '../common.utils';
 import { ProgramChair, ProgramChairFilter } from './programChair.type';
 import { ROLE_ID } from '../../constants/roles';
 
@@ -14,8 +14,8 @@ export const createProgramChair = async (programChairData: ProgramChair) => {
             throw new AppError('User with this email already exists', 400);
         }
 
-        const generatedPassword = `${programChairData.personalData.lastName.toLowerCase()}${new Date().getFullYear()}`;
-        const hashedPassword = await hashPassword(generatedPassword);
+        const generatedPassword = generateDefaultPassword();
+                const hashedPassword = await hashPassword(generatedPassword);
 
         const result = await db.transaction(async (tx) => {
             const checkEmailExists = await tx.select().from(persons).where(eq(persons.email, programChairData.personalData.email));

@@ -4,7 +4,7 @@ import { and, eq, ilike, ne, or } from 'drizzle-orm';
 import { Staff, StaffFilter } from './staff.type';
 import { Person } from '../common.type';
 import { persons } from '../../db/Person';
-import { hashPassword } from '../common.utils';
+import { generateDefaultPassword, hashPassword } from '../common.utils';
 import { checkUserExists } from '../common.utils';
 import { AppError } from '../../middleware/app-error';
 import { ROLE_ID } from '../../constants/roles';
@@ -15,7 +15,7 @@ export const createStaff = async (staffData: Staff) => {
             throw new AppError("User with this email already exists", 400);
         }
 
-        const generatedPassword = `${staffData.personalData.lastName.toLowerCase()}${new Date().getFullYear()}`;
+        const generatedPassword = generateDefaultPassword();
         const hashedPassword = await hashPassword(generatedPassword);
 
         const result = await db.transaction(async (tx) => {

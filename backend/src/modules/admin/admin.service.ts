@@ -4,7 +4,7 @@ import { admins } from '../../db/Admin';
 import { offices } from '../../db/Office';
 import { persons } from '../../db/Person';
 import { AppError } from '../../middleware/app-error';
-import { checkUserExists, hashPassword } from '../common.utils';
+import { checkUserExists, generateDefaultPassword, hashPassword } from '../common.utils';
 import { Admin, AdminFilter } from './admin.type';
 import { ROLE_ID } from '../../constants/roles';
 
@@ -14,9 +14,9 @@ export const createAdmin = async (adminData: Admin) => {
             throw new AppError('User with this email already exists', 400);
         }
 
-        const generatedPassword = `${adminData.personalData.lastName.toLowerCase()}${new Date().getFullYear()}`;
+        const generatedPassword = generateDefaultPassword();
         const hashedPassword = await hashPassword(generatedPassword);
-
+        
         const result = await db.transaction(async (tx) => {
             const checkEmailExists = await tx.select().from(persons).where(eq(persons.email, adminData.personalData.email));
             if (checkEmailExists.length > 0) {

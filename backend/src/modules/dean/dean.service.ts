@@ -3,7 +3,7 @@ import { db } from '../../db/client';
 import { deans } from '../../db/Dean';
 import { persons } from '../../db/Person';
 import { AppError } from '../../middleware/app-error';
-import { checkUserExists, hashPassword } from '../common.utils';
+import { checkUserExists, generateDefaultPassword, hashPassword } from '../common.utils';
 import { Dean, DeanFilter } from './dean.type';
 import { ROLE_ID } from '../../constants/roles';
 
@@ -13,7 +13,7 @@ export const createDean = async (deanData: Dean) => {
             throw new AppError('User with this email already exists', 400);
         }
 
-        const generatedPassword = `${deanData.personalData.lastName.toLowerCase()}${new Date().getFullYear()}`;
+        const generatedPassword = generateDefaultPassword();
         const hashedPassword = await hashPassword(generatedPassword);
 
         const result = await db.transaction(async (tx) => {
