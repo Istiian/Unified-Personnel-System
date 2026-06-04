@@ -9,7 +9,6 @@ export const students = pgTable('students', {
     enrollmentDate: date('enrollment_date').notNull(),
     courseId: integer('course_id').notNull().references(() => courses.courseId),
     status: StudentStatus('status').notNull().default('active'),
-    section: varchar('section', { length: 50 }).notNull(),
     studentType: StudentType('student_type').notNull().default('regular'),
 });
 

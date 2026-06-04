@@ -2,13 +2,15 @@ import { Router } from 'express';
 import { createStaffHandler, listStaffHandler, updateStaffHandler, deleteStaffHandler } from './staff.controller';
 import { validateRequest } from '../../middleware/validateRequest';
 import { RegisterStaffSchema, UpdateStaffSchema } from './staff.validator';
+import { hasPermission } from '../../middleware/hasPermission';
 
 const router = Router();
 
-router.post('/', validateRequest(RegisterStaffSchema), createStaffHandler);
-router.get('/', listStaffHandler);
-router.get('/:staffId', listStaffHandler);
-router.put('/:staffId', validateRequest(UpdateStaffSchema), updateStaffHandler);
-router.delete('/:staffId', deleteStaffHandler);
+
+router.post('/',hasPermission("personnel:read:ay"), validateRequest(RegisterStaffSchema),createStaffHandler);
+router.get('/', hasPermission("personnel:read:any"), listStaffHandler);
+router.get('/:staffId', hasPermission("personnel:read:any", "personnel:read:self"), listStaffHandler);
+router.put('/:staffId', hasPermission("personnel:update:any"), validateRequest(UpdateStaffSchema), updateStaffHandler);
+router.delete('/:staffId', hasPermission("personnel:delete:any"), deleteStaffHandler);
 
 export default router;

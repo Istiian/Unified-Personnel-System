@@ -75,7 +75,7 @@ export const login = async (loginData: loginRequest) => {
         if (!user) {
             throw new AppError('User not found', 404);
         }
-        console.log('User found:', user);
+        
         const isMatch = await verifyPassword(loginData.password, user.password);
         if (!isMatch) {
             throw new AppError('Invalid credentials', 401);
@@ -83,7 +83,6 @@ export const login = async (loginData: loginRequest) => {
 
         //format token credentials
         const tokenCredentials = formatTokenCredentials(user);
-        console.log('Token Credentials:', tokenCredentials);
         const accessToken = generateAccessToken(tokenCredentials);
         const refreshToken = generateRefreshToken(tokenCredentials);
         

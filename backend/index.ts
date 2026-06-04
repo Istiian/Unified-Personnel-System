@@ -25,7 +25,7 @@ app.use('/api/department', passport.authenticate('jwt', { session: false }), dep
 app.use('/api/staff', passport.authenticate('jwt', { session: false }), staffRoutes);
 app.use('/api/faculty', passport.authenticate('jwt', { session: false }), facultyRoutes);
 app.use('/api/dean', passport.authenticate('jwt', { session: false }), deanRoutes);
-app.use('/api/admin', passport.authenticate('jwt', { session: false }), adminRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/program-chair', passport.authenticate('jwt', { session: false }), programChairRoutes);
 
 app.get('/', (req: Request, res: Response) => {

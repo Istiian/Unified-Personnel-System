@@ -9,6 +9,8 @@ export { persons } from './Person';
 export { programChairs } from './Program_Chair';
 export { staff } from './Staff';
 export { students } from './Student';
-
+export { permissionRoles } from './PermissionRole';
+export { permissions } from './Permission';
+export { roles } from './Roles';
 
 export * from './relations';

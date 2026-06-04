@@ -10,7 +10,6 @@ export const getAllStudents = async (page: number, limit: number, filter: Studen
     const offset = (page - 1) * limit;
     const studentWhereClause: any = []
     if (filter.status) studentWhereClause.push(eq(students.status, filter.status))
-    if (filter.section) studentWhereClause.push(eq(students.section, filter.section))
     if (filter.studentType) studentWhereClause.push(eq(students.studentType, filter.studentType))
     if (filter.courseId) studentWhereClause.push(eq(students.courseId, filter.courseId))
     
@@ -95,7 +94,6 @@ export const registerStudent = async (studentData: Student) => {
                 enrollmentDate: studentData.studentData.enrollmentDate,
                 courseId: studentData.studentData.courseId,
                 status: studentData.studentData.status,
-                section: studentData.studentData.section,
                 studentType: studentData.studentData.studentType
             })
 
@@ -157,7 +155,6 @@ export const updateStudentInfo = async (studentId: number, studentData: Partial<
                     enrollmentDate: studentData.studentData?.enrollmentDate,
                     courseId: studentData.studentData?.courseId,
                     status: studentData.studentData?.status,
-                    section: studentData.studentData?.section,
                     studentType: studentData.studentData?.studentType
                 })
                 .where(eq(students.personId, existingStudent.personId))

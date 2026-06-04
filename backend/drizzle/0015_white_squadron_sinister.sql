@@ -1,0 +1,1 @@
+ALTER TABLE "permissions" ALTER COLUMN "name" SET DATA TYPE varchar;

@@ -9,6 +9,9 @@ import { students } from './Student';
 import { offices } from './Office';
 import { courses } from './Course';
 import { departments } from './Department';
+import { permissionRoles } from './PermissionRole';
+import { roles } from './Roles';
+import { permissions } from './Permission';
 
 export const personsRelations = relations(persons, ({ one }) => ({
   admin: one(admins,{
@@ -35,6 +38,10 @@ export const personsRelations = relations(persons, ({ one }) => ({
     fields: [persons.personId], 
     references: [students.personId]
   }),
+  role: one(roles, {
+    fields: [persons.role],
+    references: [roles.roleId]
+  })
 }));
 
 export const adminsRelations = relations(admins, ({ one }) => ({
@@ -119,4 +126,24 @@ export const departmentsRelations = relations(departments, ({ many }) => ({
   deans: many(deans),
   faculty: many(faculty),
   courses: many(courses),
+}));
+
+export const rolesRelations = relations(roles, ({ many }) => ({
+  persons: many(persons),
+  permissionRoles: many(permissionRoles)
+}));
+
+export const permissionsRelations = relations(permissions, ({ many }) => ({
+  permissionRoles: many(permissionRoles)
+}));
+
+export const permissionRolesRelations = relations(permissionRoles, ({ one }) => ({
+  role: one(roles, {
+    fields: [permissionRoles.roleId],
+    references: [roles.roleId]
+  }),
+  permission: one(permissions, {
+    fields: [permissionRoles.permissionId],
+    references: [permissions.permissionId]
+  })
 }));

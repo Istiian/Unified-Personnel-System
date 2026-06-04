@@ -1,6 +1,6 @@
-import { pgTable, varchar, date, serial, index } from "drizzle-orm/pg-core";
+import { pgTable, varchar, date, serial, index, integer } from "drizzle-orm/pg-core";
 import { personRole } from "./Enum";
-import { sql } from "drizzle-orm";
+import {roles} from "./Roles";
 
 export const persons = pgTable('persons', {
     personId: serial('id').primaryKey(),
@@ -18,7 +18,7 @@ export const persons = pgTable('persons', {
     cityMunicipality: varchar('city_municipality', { length: 255 }).notNull(),
     region: varchar('region', { length: 255 }).notNull(),
     province: varchar('province', { length: 255 }).notNull(),
-    role: personRole('role').notNull(),
+    role: integer('role').notNull().references(() => roles.roleId)
 },
     (table) => [
         index('idx_person_email').on(table.email),

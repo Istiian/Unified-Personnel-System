@@ -12,7 +12,6 @@ export const listStudentsHandler = async (req: Request, res: Response, next: Nex
         
         const filter: any = {};
         if (req.query.status) filter.status = req.query.status as string;
-        if (req.query.section) filter.section = req.query.section as string;
         if (req.query.studentType) filter.studentType = req.query.studentType as string;
         if (req.query.studentStatus) filter.studentStatus = req.query.studentStatus as string;
         if (req.query.courseId) filter.courseId = parseInt(req.query.courseId as string);
@@ -28,11 +27,6 @@ export const listStudentsHandler = async (req: Request, res: Response, next: Nex
 export const getStudentByIdHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const studentIdParam = Array.isArray(req.params.studentId) ? req.params.studentId[0] : req.params.studentId;
-        // if (!studentIdParam) return next(new AppError('Missing studentId parameter', 400));
-        // const studentId = parseInt(studentIdParam, 10);
-        // if (Number.isNaN(studentId)){
-        //     return next(new AppError('Invalid studentId', 400));
-        // }
         const studentId = veritfyParam(studentIdParam, 'studentId');
         const student = await getStudentById(studentId);
         if (!student) {

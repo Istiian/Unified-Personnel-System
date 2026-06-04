@@ -4,8 +4,9 @@ import {eq} from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 import {createTransport} from 'nodemailer';
 import { AppError } from '../middleware/app-error';
-import { sendEmailRequest } from './auth/type.auth';
+import { sendEmailRequest} from './auth/type.auth';
 import PDFDocument from 'pdfkit';
+import { UserData } from './common.type';
 
 const transporter = createTransport({
     host: process.env.EMAIL_HOST,
@@ -65,4 +66,57 @@ export const veritfyParam = (param: string, paramName: string): number => {
         throw new AppError(`Invalid ${paramName}`, 400);
     }
     return paramValue;
+}
+
+export const FormatUserData = (user: UserData) => {
+    switch (user.role?.name) {
+        case 'student':
+            return {
+                studentId: user.student?.studentId,
+                personId: user.personId,
+                role: user.role.name,
+                scope: user.student?.course?.name
+            };
+        // Add cases for other roles as needed
+        case 'faculty':
+            return {
+                facultyId: user.faculty?.facultyId,
+                personId: user.personId,
+                role: user.role.name,
+                scope: user.faculty?.department?.name
+            };
+        case 'admin':
+            return {
+                adminId: user.admin?.adminId,
+                personId: user.personId,
+                role: user.role.name,
+                scope: user.admin?.office?.name
+            };
+        case 'dean':
+            return {
+                deanId: user.dean?.deanId,
+                personId: user.personId,
+                role: user.role.name,
+                scope: user.dean?.department?.name
+            };
+        case 'programChair':
+            return {
+                programChairId: user.programChair?.programChairId,
+                personId: user.personId,
+                role: user.role.name,
+                scope: user.programChair?.course?.name
+            };
+        case 'staff':
+            return {
+                staffId: user.staff?.staffId,
+                personId: user.personId,
+                role: user.role.name,
+                scope: user.staff?.office?.name
+            };
+        default:
+            return {
+                personId: user.personId,
+                role: user.role
+            };
+    }
 }
