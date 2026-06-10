@@ -1,0 +1,1 @@
+ALTER TYPE "public"."RoleEnum" ADD VALUE 'SuperAdmin';
