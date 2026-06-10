@@ -1,12 +1,12 @@
 import { user } from "../../db/user";
 import { db } from "../../db/client"
-import { RegisterUser} from "./user.type";
+import { RegisterUser, UpdateUserInfo} from "./user.type";
 import { AppError } from "../../utils/AppError";
 import { hashPassword, comparePassword } from "../../lib/bcrypt";
-import {desc, eq} from "drizzle-orm";
+import {desc, eq, and, ne} from "drizzle-orm";
 import { randomBytes } from "crypto";
 
-export const createUser = async (userData: RegisterUser): Promise<{ username: string; password: string }> => {
+export const createUser = async (userData: RegisterUser) => {
     const existingUser = await db.select()
         .from(user)
         .where(eq(user.email, userData.email))
@@ -23,25 +23,8 @@ export const createUser = async (userData: RegisterUser): Promise<{ username: st
     const generatedUsername = `${userData.lastName.toUpperCase()}${new Date().getFullYear()}${(lastRow?.userId || 0) + 1}`;
     const generatedPassword = randomBytes(16).toString('base64').slice(0, 16);
     const hashedPassword = await hashPassword(generatedPassword);
-    
-    await db.insert(user).values({
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        middleName: userData.middleName,
-        birthDate: userData.birthDate,
-        gender: userData.gender,
-        email: userData.email,
-        contactNumber: userData.contactNumber,
-        username: generatedUsername,
-        password: hashedPassword,
-        houseNumber: userData.houseNumber,
-        street: userData.street,
-        barangay: userData.barangay,
-        cityMunicipality: userData.cityMunicipality,
-        region: userData.region,
-        province: userData.province,
-        role: userData.role
-    })
+    const insertData = {...userData, username: generatedUsername, password: hashedPassword};
+    await db.insert(user).values(insertData)
     
     return {
         username: generatedUsername,
@@ -49,3 +32,26 @@ export const createUser = async (userData: RegisterUser): Promise<{ username: st
     };
 }
 
+export const updateUserInfo = async (userId: number, userData: UpdateUserInfo) => {
+    if (userData.email) {
+        const checkEmail = await db.select()
+            .from(user)
+            .where(and(eq(user.email, userData.email), ne(user.userId, userId)))
+            .limit(1);
+        if (checkEmail.length > 0) throw new AppError('Email already exists', 400);
+    }
+    
+    const [updatedUser] = await db
+        .update(user)
+        .set(userData)
+        .where(eq(user.userId, userId))
+        .returning({
+            userId: user.userId,  firstName: user.firstName,
+            lastName: user.lastName, middleName: user.middleName,
+            birthDate: user.birthDate, email: user.email,
+            contactNumber: user.contactNumber,houseNumber: user.houseNumber,
+            street: user.street, barangay: user.barangay, cityMunicipality: user.cityMunicipality,
+            region: user.region, province: user.province
+        });
+    return updatedUser;
+};

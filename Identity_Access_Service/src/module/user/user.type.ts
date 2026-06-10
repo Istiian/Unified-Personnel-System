@@ -28,3 +28,5 @@ import { user } from "../../db/schema";
 export type RegisterUser = Omit<InferInsertModel<typeof user>, 'userId' | 'password'> & {
     confirmPassword: string;
 }
+
+export type UpdateUserInfo = Partial<Omit<InferInsertModel<typeof user>, 'userId' | 'password' | 'username'| 'role'>>
